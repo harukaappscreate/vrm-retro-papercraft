@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VRM Retro Papercraft</title>
+<style>
+  :root { --bar: 44px; --panel: 290px; --bg: #1b1f33; --ink: #e8e8f0; --dim: #9aa3c7; --accent: #7696de; --warn: #d4186c; --gold: #e9c35b; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font: 13px/1.45 system-ui, sans-serif; }
+  button, select { font: inherit; }
+  #bar { position: fixed; top: 0; left: 0; right: 0; height: var(--bar); z-index: 1000; box-sizing: border-box;
+         display: flex; gap: 6px; align-items: center; padding: 0 10px; background: #2b335f; overflow-x: auto; white-space: nowrap; }
+  #bar .sep { width: 1px; height: 24px; background: #4a5590; margin: 0 4px; flex: none; }
+  .btn { background: var(--accent); color: #10142a; border: 0; padding: 6px 11px; border-radius: 4px; cursor: pointer; font-weight: 600; flex: none; }
+  .btn.ghost { background: #3a4580; color: var(--ink); }
+  .btn.gold { background: var(--gold); }
+  .btn:disabled { opacity: .4; cursor: default; }
+  label.btn input { display: none; }
+  select { padding: 5px; border-radius: 4px; border: 0; background: #3a4580; color: var(--ink); flex: none; }
+  #pyxel-screen { position: fixed !important; top: var(--bar) !important; left: 0 !important; right: var(--panel) !important;
+                  bottom: 0 !important; width: auto !important; height: auto !important; }
+  #panel { position: fixed; top: var(--bar); right: 0; bottom: 0; width: var(--panel); box-sizing: border-box; overflow-y: auto;
+           padding: 12px 14px; background: #20253f; border-left: 1px solid #333c6a; z-index: 900; }
+  #panel h2 { font-size: 14px; margin: 14px 0 6px; color: var(--dim); text-transform: uppercase; letter-spacing: .05em; }
+  #panel h2:first-child { margin-top: 0; }
+  #title { font-size: 16px; font-weight: 700; }
+  .warn { background: var(--warn); color: #fff; padding: 3px 7px; border-radius: 3px; margin: 3px 0; font-weight: 600; }
+  .note { background: #4a3b1c; color: #f3dfa8; padding: 6px 8px; border-radius: 4px; margin: 6px 0; }
+  .muted { color: var(--dim); }
+  #status { margin-top: 10px; color: var(--dim); min-height: 1.4em; }
+  #status.err { color: #ff9798; }
+  .row { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+  .row > span:first-child { flex: 1; }
+  .seg { display: flex; margin: 8px 0; }
+  .seg button { flex: 1; border: 0; padding: 6px; background: #3a4580; color: var(--ink); cursor: pointer; font-weight: 600; }
+  .seg button:first-child { border-radius: 4px 0 0 4px; }
+  .seg button:last-child { border-radius: 0 4px 4px 0; }
+  .seg button.on { background: var(--gold); color: #10142a; }
+  .seg button:disabled { opacity: .4; cursor: default; }
+  ol { margin: 4px 0; padding-left: 18px; }
+  a { color: var(--accent); }
+  @media (max-width: 760px) {
+    :root { --panel: 0px; }
+    #pyxel-screen { bottom: 45% !important; }
+    #panel { top: 55%; left: 0; width: auto; border-left: 0; border-top: 1px solid #333c6a; }
+  }
+</style>
+<script src="https://kitao.dev/pyxel/3.0.1/pyxel.js"></script>
+</head>
+<body>
+<div id="bar">
+  <label class="btn" title="Your VRM 0.x or 1.0 file">Open VRM <input type="file" id="file" accept=".vrm,.glb"></label>
+  <button class="btn ghost" id="sample" type="button" title="Load a free sample avatar (Sendagaya Shibu, CC0, 4 MB)">Try sample</button>
+  <span class="sep"></span>
+  <button class="btn ghost need" id="loop" disabled title="Fold and unfold, again and again">Loop</button>
+  <button class="btn ghost need" id="fold" disabled title="Stop folded / flat">Fold / unfold</button>
+  <button class="btn ghost need" id="pause" disabled>Pause</button>
+  <button class="btn ghost need" id="reset" disabled>Reset view</button>
+  <span class="sep"></span>
+  <button class="btn ghost need" id="shot" disabled title="Save a PNG of the screen">Screenshot</button>
+  <button class="btn ghost need" id="gif" disabled title="Save the last few seconds as a GIF">GIF</button>
+</div>
+<div id="pyxel-screen"></div>
+<div id="panel">
+  <div id="status"></div>
+  <h2>Avatar</h2>
+  <div id="title" class="muted">Drop a .vrm file on the screen, use Open VRM, or press Try sample.</div>
+  <div id="author" class="muted"></div>
+  <div id="warnings"></div>
+  <div id="license" class="muted"></div>
+
+  <h2>Papercraft</h2>
+  <div class="row"><span>Height of the figure</span><select id="size">
+    <option value="150">150 mm</option><option value="180" selected>180 mm</option>
+    <option value="220">220 mm</option><option value="260">260 mm</option></select></div>
+  <div class="seg"><button id="full" class="on">Full colour</button><button id="retro">Retro colours</button></div>
+  <button class="btn gold need" id="pdf" disabled style="width:100%">Download PDF (A4)</button>
+  <div id="result" class="muted" style="margin-top:6px"></div>
+
+  <h2>How to build</h2>
+  <ol class="muted">
+    <li>Print on thick paper (120–160 g/m²) at <b>100 % / actual size</b>. Turn off "fit to page".</li>
+    <li>Cut the solid lines. Fold the dashed lines as mountains (print outside) and the dash-dot lines as valleys.</li>
+    <li>Glue tab <b>N</b> under the edge marked <b>N</b>. Where a number is printed on both edges and there is no tab,
+      join the edges with a little tape from inside. Build each part (head, body, arms, legs, feet) into a closed solid.</li>
+    <li>Glue the parts together where they meet: arms to the body sides, head on the neck, legs under the body, feet under the legs.</li>
+  </ol>
+  <div class="muted">Thin arms and legs are made a little thicker, so that no edge is shorter than 5 mm.
+  A bigger height makes the figure easier to build (and more pages).</div>
+
+  <h2>About</h2>
+  <div class="muted">Your file never leaves your device: it is read and converted inside this page.<br>
+  Drag on the screen to turn, wheel to zoom.<br>
+  Each body part is rebuilt as a closed paper solid (rings along the bones), coloured from the avatar's own textures,
+  unrolled as bands, with numbered glue tabs.<br>
+  A sibling of VRM RETRO VIEWER, VRM Motion Studio and VRM RETRO MAKER.<br>
+  Made with <a href="https://github.com/kitao/pyxel" target="_blank" rel="noopener">Pyxel 3</a> by Takashi Kitao (MIT License).
+  Runs on Pyodide (MPL-2.0), NumPy (BSD-3-Clause) and Pillow (MIT-CMU).<br>
+  Tool by haruka_apps (MIT License).</div>
+  <div class="muted" style="margin-top:6px">Sample avatar: Sendagaya Shibu, a CC0 VRoid sample model (VRM data by coati;
+  redistribution and modification allowed). For this tool its textures were reduced and its facial expressions removed.</div>
+  <h2>License of the VRM you open</h2>
+  <div class="muted">A papercraft is a modified copy of your avatar. This tool refuses avatars whose license forbids
+  modification. If the avatar may not be redistributed, the PDF says so: print it for yourself only, and do not
+  share the PDF or the finished figure. Only use avatars you made or may use; no characters that belong to someone else.</div>
+  <h2>Disclaimer</h2>
+  <div class="muted">This tool and everything it makes are provided "AS IS", without warranty of any kind.
+  The author accepts no liability for any damage or trouble arising from their use.
+  You are responsible for following the license of the VRM you load. Mind your fingers with knives and scissors.</div>
+</div>
+<pyxel-play root="." name="vrm_retro_papercraft.pyxapp" packages="numpy,pillow"></pyxel-play>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function ready() { return window.pyxelContext && window.pyxelContext.initialized; }
+  function status(text, err) { $("status").textContent = text || ""; $("status").className = err ? "err" : ""; }
+  function send(cmd) {
+    if (!ready()) return;
+    window.pyxelContext.pyodide.runPython(
+      "import pyxel; pyxel._vpc = list(getattr(pyxel, '_vpc', None) or []) + [" + JSON.stringify(cmd) + "]");
+  }
+  async function openFile(file) {
+    if (!ready()) { status("Still starting... please try again in a moment.", true); return; }
+    const FS = window.pyxelContext.pyodide.FS;
+    try { FS.mkdirTree("/tmp/inbox"); } catch (e) {}
+    const name = Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    FS.writeFile("/tmp/inbox/" + name, new Uint8Array(await file.arrayBuffer()));
+    status("Opening " + file.name + " ...");
+  }
+  $("sample").addEventListener("click", async () => {
+    if (!ready()) { status("Still starting... please try again in a moment.", true); return; }
+    $("sample").disabled = true;
+    status("Downloading the sample avatar (4 MB) ...");
+    try {
+      const r = await fetch("sample.vrm");
+      if (!r.ok) throw new Error(r.status);
+      await openFile(new File([await r.blob()], "Sendagaya_Shibu_sample.vrm"));
+    } catch (e) { status("Could not load the sample: " + e.message, true); }
+    $("sample").disabled = false;
+  });
+  $("file").addEventListener("change", (e) => { if (e.target.files.length) openFile(e.target.files[0]); e.target.value = ""; });
+  $("loop").addEventListener("click", () => send("loop"));
+  $("fold").addEventListener("click", () => send("fold"));
+  $("pause").addEventListener("click", () => send("pause"));
+  $("reset").addEventListener("click", () => send("view:reset"));
+  $("shot").addEventListener("click", () => send("shot"));
+  $("gif").addEventListener("click", () => send("gif"));
+  $("size").addEventListener("change", () => send("size:" + $("size").value));
+  function colours(retro) {
+    $("full").classList.toggle("on", !retro);
+    $("retro").classList.toggle("on", retro);
+    send("retro:" + (retro ? 1 : 0));
+  }
+  $("full").addEventListener("click", () => colours(false));
+  $("retro").addEventListener("click", () => colours(true));
+  $("pdf").addEventListener("click", () => send("pdf"));
+
+  // ---- Pyxel -> page
+  window.vpcInfo = (json) => {
+    const d = JSON.parse(json);
+    $("title").textContent = d.title + "  (" + d.version + ")";
+    $("title").className = "";
+    $("author").textContent = "by " + d.author;
+    const warns = d.warnings.slice();
+    if (!d.allowed) warns.unshift("Modification is not allowed: this avatar cannot be made into a papercraft.");
+    else if (d.personal) warns.unshift("Print for yourself only: do not share the PDF or the finished figure.");
+    $("warnings").innerHTML = warns.map((w) => `<div class="warn">${esc(w)}</div>`).join("");
+    $("license").innerHTML = d.license.map((l) => /^https?:\/\//.test(l)
+      ? `<div><a href="${esc(l)}" target="_blank" rel="noopener">${esc(l)}</a></div>` : `<div>${esc(l)}</div>`).join("");
+    document.querySelectorAll(".need").forEach((b) => (b.disabled = !d.allowed));
+    $("pdf").disabled = true;
+    $("result").textContent = "";
+  };
+  window.vpcMade = (json) => {
+    const d = JSON.parse(json);
+    document.querySelectorAll(".need").forEach((b) => (b.disabled = false));
+    $("result").innerHTML = `${d.pages} A4 pages · ${d.pieces} pieces · ${d.faces} faces · ${d.tabs} glue tabs<br>` +
+      `Height ${d.height} mm · shortest edge ${d.shortest} mm` + (d.shortest < 6 ? " (fiddly: try a bigger height)" : "");
+  };
+  window.vpcStatus = (json) => { const d = JSON.parse(json); status(d.text, d.error); };
+</script>
+</body>
+</html>
