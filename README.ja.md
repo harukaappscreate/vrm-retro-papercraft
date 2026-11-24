@@ -3,7 +3,7 @@
 VRM アバター（0.x / 1.0）を開くと、**ペーパークラフトの展開図**（A4 の PDF）ができます。印刷して切って折って貼ると、身長 150〜260 mm の立つ紙のアバターになります。
 画面では、紙の部品が折れて立ち上がる様子を 3D で見られます。
 
-[VRM RETRO VIEWER](https://github.com/harukaappscreate/vrm-retro-viewer)、[VRM Motion Studio](https://github.com/harukaappscreate/vrm-motion-studio)、[VRM RETRO MAKER](https://github.com/harukaappscreate/vrm-retro-maker) の姉妹ツールです。ファイルは外に送りません。ブラウザ（または自分のパソコン）の中だけで読み、変換します。
+[VRM RETRO VIEWER](https://github.com/harukaappscreate/vrm-retro-viewer)、[VRM Motion Studio](https://github.com/harukaappscreate/vrm-motion-studio)、[VRM RETRO MAKER](https://github.com/harukaappscreate/vrm-retro-maker)、[VRM RETRO 4DGS STUDIO](https://github.com/harukaappscreate/vrm-retro-4dgs) の姉妹ツールです。ファイルは外に送りません。ブラウザ（または自分のパソコン）の中だけで読み、変換します。
 
 ## しくみ
 

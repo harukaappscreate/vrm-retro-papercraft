@@ -5,7 +5,7 @@
 Open a VRM avatar (0.x or 1.0) and get a **papercraft** of it: A4 pages (PDF) to print, cut, fold and glue into a standing paper figure, 150–260 mm tall.
 The screen shows the paper pieces folding themselves up into the figure.
 
-A sibling of [VRM RETRO VIEWER](https://github.com/harukaappscreate/vrm-retro-viewer), [VRM Motion Studio](https://github.com/harukaappscreate/vrm-motion-studio) and [VRM RETRO MAKER](https://github.com/harukaappscreate/vrm-retro-maker).
+A sibling of [VRM RETRO VIEWER](https://github.com/harukaappscreate/vrm-retro-viewer), [VRM Motion Studio](https://github.com/harukaappscreate/vrm-motion-studio), [VRM RETRO MAKER](https://github.com/harukaappscreate/vrm-retro-maker) and [VRM RETRO 4DGS STUDIO](https://github.com/harukaappscreate/vrm-retro-4dgs).
 
 Your file is never uploaded. Reading and converting happen inside your browser (or your own computer).
 
